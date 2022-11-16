@@ -18,16 +18,16 @@ const columns: GridColDef[] = [
         field: "region",
         headerName: "Регион",
         flex: 0.3,
-    },{
+    }, {
         field: "area",
         headerName: "Район",
         flex: 0.3,
     }, {
-        field: "id",
+        field: "idd",
         headerName: "ID",
         flex: 0.3,
     }, {
-        field: "idevice",
+        field: "id",
         headerName: "№ модема",
         flex: 0.3,
     }, {
@@ -41,46 +41,35 @@ const columns: GridColDef[] = [
     }, {
         field: "time",
         headerName: "Время",
-        flex: 1,
+        flex: 0.6,
     },
 ]
 
-function AlertTable(props: { alarm: Alarm, setUrl: Function}) {
-    const [selected, setSelected] = useState<number[]>([])
-
+function AlertTable(props: { alarm: Alarm, setUrl: Function }) {
     const rows = props.alarm.CrossInfo.map(al => {
-        return {...al, time: new Date(al.time).toLocaleString('ru-RU', {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone})}
+        return {
+            ...al,
+            idd: al.id,
+            id: al.idevice,
+            time: new Date(al.time).toLocaleString('ru-RU', {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone})
+        }
     })
 
     return (
-        <div style={{height: "60vh", width: "100%"}}>
+        <div style={{height: "80vh", width: "100%"}}>
             <ThemeProvider theme={theme}>
                 <DataGrid
-                    // components={{
-                    //     Toolbar: CustomTableToolbar,
-                    // }}
                     rows={rows}
                     columns={columns}
-                    checkboxSelection={true}
                     onSelectionModelChange={(newSelectionModel) => {
-                        // setSelected([Number(newSelectionModel)])
-                        console.log([Number(newSelectionModel)])
+                        const device = props.alarm.CrossInfo.find(al => al.idevice === Number(newSelectionModel))
+                        props.setUrl(
+                            (window.location.origin + window.location.pathname)
+                                .replace('alarm', 'cross') +
+                            `?Region=${device?.region}&Area=${device?.area}&ID=${device?.id}`
+                        )
                     }}
-                    selectionModel={selected}
                     hideFooter
-                    // componentsProps={{
-                    //     toolbar: {
-                    //         search: {
-                    //             value: searchText,
-                    //             onChange: (event: ChangeEvent<HTMLInputElement>) => requestSearch(event.target.value),
-                    //             clearSearch: () => requestSearch(""),
-                    //         },
-                    //         filter: {
-                    //             value: filter,
-                    //             onChange: handleFilterChange,
-                    //         }
-                    //     },
-                    // }}
                 />
             </ThemeProvider>
         </div>

@@ -6,7 +6,6 @@ import {Alarm, AlarmMessage} from "../common";
 
 function App() {
     const [alarm, setAlarm] = useState<Alarm>()
-    const [selected, setSelected] = useState()
     const [url, setUrl] = useState("")
 
     useEffect(() => {
@@ -28,7 +27,7 @@ function App() {
     return (
         <>
             <div style={{width: "100%"}}>
-                <AppBar/>
+                <AppBar url={url} ring={alarm?.ring}/>
             </div>
             {alarm && <AlertTable alarm={alarm} setUrl={setUrl}/>}
         </>
